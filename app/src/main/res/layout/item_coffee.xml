@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/coffeeImage"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/coffee_image"
+        android:src="@android:drawable/ic_menu_gallery"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/coffeeName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text=""
+        tools:text="@string/latte"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/coffeeImage"
+        app:layout_constraintTop_toTopOf="@id/coffeeImage"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/coffeePrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text=""
+        tools:text="@string/price_4_50"
+        android:textSize="14sp"
+        android:textColor="@color/gray"
+        app:layout_constraintStart_toStartOf="@id/coffeeName"
+        app:layout_constraintTop_toBottomOf="@id/coffeeName"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/coffeeIngredients"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text=""
+        tools:text="@string/ingredients_milk_coffee"
+        android:textSize="12sp"
+        android:textColor="@color/gray_light"
+        app:layout_constraintStart_toStartOf="@id/coffeeName"
+        app:layout_constraintTop_toBottomOf="@id/coffeePrice"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
