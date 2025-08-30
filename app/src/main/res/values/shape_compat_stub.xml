@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Stub to satisfy accidental references to @style/ShapeAppearanceOverlay -->
+    <style name="ShapeAppearanceOverlay" />
+</resources>

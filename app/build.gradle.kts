@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.brewbuddy"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.brewbuddy"
