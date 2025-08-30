@@ -1,7 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <!-- Home Fragment -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.brewbuddy.feature.home.ui.HomeFragment"
+        android:label="Home">
+        <action
+            android:id="@+id/action_homeFragment_to_drinkDetailsFragment"
+            app:destination="@id/drinkDetailsFragment" />
+    </fragment>
+
+    <!-- Menu Fragment -->
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.brewbuddy.feature.menu.ui.MenuFragment"
+        android:label="Menu">
+        <action
+            android:id="@+id/action_menuFragment_to_drinkDetailsFragment"
+            app:destination="@id/drinkDetailsFragment" />
+    </fragment>
+
+    <!-- Drink Details Fragment -->
+    <fragment
+        android:id="@+id/drinkDetailsFragment"
+        android:name="com.example.brewbuddy.feature.menu.ui.details.DrinkDetailsFragment"
+        android:label="Drink Details">
+        <argument
+            android:name="drinkId"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>
