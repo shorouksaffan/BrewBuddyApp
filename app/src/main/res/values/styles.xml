@@ -46,13 +46,7 @@
         <item name="cornerSizeBottomRight">12dp</item>
     </style>
 
-    <style name="RoundedImageFromBottom" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">0dp</item>
-        <item name="cornerSizeTopRight">0dp</item>
-        <item name="cornerSizeBottomLeft">100dp</item>
-        <item name="cornerSizeBottomRight">100dp</item>
-    </style>
+
 
     <style name="RoundedSheet" parent="">
         <item name="cornerFamily">rounded</item>
