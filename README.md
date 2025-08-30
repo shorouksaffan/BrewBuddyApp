@@ -96,14 +96,19 @@ The **bridge** between Data (API/DB) and UI.
 
 ---
 
-### Task 2: Base Layouts by ***Emad Rabie***
+### Task 2: Base Layouts & onBoarding by ***Emad Rabie***
 - `activity_main.xml`  
 - `fragment_home.xml`  
 - `fragment_menu.xml`  
 - `fragment_orders.xml`  
 - `fragment_favorites.xml`
 - `item_best_seller.xml`
-
+- `fragment_splash.xml`
+- `activity_splash.xml`
+- `PreferenceHelper`
+- `LoginFragment.kt`
+- `SplashFragment.kt`
+- 
 ---
 
 ### Task 3: RecyclerView Items by ***Mohamed Ashraf***
