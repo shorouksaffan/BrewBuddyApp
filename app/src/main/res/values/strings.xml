@@ -14,5 +14,9 @@
     <string name="items_count">%d items</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="continue_now">Continue</string>
+    <string name="header_good_day_with_name">Good day, %1$s!</string>
+    <string name="header_what_drink">What would you like to drink?</string>
+    <string name="header_orders">Orders</string>
+    <string name="header_favorites">Favorites</string>
 
 </resources>

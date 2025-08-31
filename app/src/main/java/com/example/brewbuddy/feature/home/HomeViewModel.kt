@@ -10,16 +10,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: DrinkRepository,
     private val userPrefs: UserPrefs
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeUiState())
+    private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
@@ -30,27 +30,34 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getAllDrinks().collect { result ->
                 when (result) {
+                    is ApiResult.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }
                     is ApiResult.Success -> {
                         val drinks = result.data
-                        val bestSeller = drinks.maxByOrNull { it.price.amount } ?: drinks.randomOrNull()
-                        val recommendations = drinks.filter { it != bestSeller }.shuffled().take(6)
+                        if (drinks.isNotEmpty()) {
+                            val bestSeller = drinks.maxByOrNull { it.price.amount } ?: drinks.random()
+                            val recommendations = drinks.filter { it != bestSeller }.shuffled().take(6)
 
-                        _uiState.value = HomeUiState(
-                            userName = userPrefs.userName,
-                            bestSeller = bestSeller,
-                            recommendations = recommendations,
-                            isLoading = false,
-                            error = null
-                        )
+                            _uiState.value = HomeUiState(
+                                userName = userPrefs.userName,
+                                bestSeller = bestSeller,
+                                recommendations = recommendations,
+                                isLoading = false,
+                                error = null
+                            )
+                        } else {
+                            _uiState.value = HomeUiState(
+                                error = "No drinks available",
+                                isLoading = false
+                            )
+                        }
                     }
                     is ApiResult.Failure -> {
                         _uiState.value = HomeUiState(
                             error = result.exception.message ?: "Failed to load data",
                             isLoading = false
                         )
-                    }
-                    ApiResult.Loading -> {
-                        _uiState.value = _uiState.value.copy(isLoading = true)
                     }
                 }
             }
