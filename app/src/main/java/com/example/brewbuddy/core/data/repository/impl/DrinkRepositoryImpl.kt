@@ -5,6 +5,7 @@ import androidx.annotation.RequiresExtension
 import com.example.brewbuddy.core.data.local.dao.DrinkCacheDao
 import com.example.brewbuddy.core.data.remote.ApiManager
 import com.example.brewbuddy.core.data.remote.ApiResult
+import com.example.brewbuddy.core.data.remote.ApiResult.*
 import com.example.brewbuddy.core.data.remote.CoffeeApiService
 import com.example.brewbuddy.core.data.remote.dto.toDrinkCacheEntity
 import com.example.brewbuddy.core.data.repository.DrinkRepository
@@ -42,15 +43,17 @@ class DrinkRepositoryImpl @Inject constructor(
             }
 
             when (apiResult) {
-                is ApiResult.Success -> {
+                is Success -> {
                     val entities = apiResult.data.map { it.toDrinkCacheEntity(isHot = true) }
                     drinkCacheDao.insertDrinks(entities)
-                    emit(ApiResult.Success(entities.map { it.toDrink() }))
+                    emit(Success(entities.map { it.toDrink() }))
                 }
 
-                is ApiResult.Failure -> {
-                    emit(ApiResult.Failure(apiResult.exception))
+                is Failure -> {
+                    emit(Failure(apiResult.exception))
                 }
+
+                Loading -> TODO()
             }
         }
     }.flowOn(dispatchersProvider.io)
@@ -69,15 +72,17 @@ class DrinkRepositoryImpl @Inject constructor(
             }
 
             when (apiResult) {
-                is ApiResult.Success -> {
+                is Success -> {
                     val entities = apiResult.data.map { it.toDrinkCacheEntity(isHot = false) }
                     drinkCacheDao.insertDrinks(entities)
-                    emit(ApiResult.Success(entities.map { it.toDrink() }))
+                    emit(Success(entities.map { it.toDrink() }))
                 }
 
-                is ApiResult.Failure -> {
-                    emit(ApiResult.Failure(apiResult.exception))
+                is Failure -> {
+                    emit(Failure(apiResult.exception))
                 }
+
+                Loading -> TODO()
             }
         }
     }.flowOn(dispatchersProvider.io)
@@ -93,12 +98,14 @@ class DrinkRepositoryImpl @Inject constructor(
             when (refreshResult) {
                 is ApiResult.Success -> {
                     val freshDrinks = drinkCacheDao.getAllDrinks().first()
-                    emit(ApiResult.Success(freshDrinks.map { it.toDrink() }))
+                    emit(Success(freshDrinks.map { it.toDrink() }))
                 }
 
                 is ApiResult.Failure -> {
                     emit(refreshResult)
                 }
+
+                ApiResult.Loading -> TODO()
             }
         }
     }.flowOn(dispatchersProvider.io)

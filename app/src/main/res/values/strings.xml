@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">BrewBuddy</string>
     <string name="good_day_emad_rabie">Good day, Emad Rabie</string>
+    <string name="drink_image">"drink image "</string>
+    <string name="sample_drink_name">sample drink name</string>
+    <string name="price_4_50">price</string>
+    <string name="remove_from_favorites">remove from favorites</string>
+    <string name="coffee_image">coffee image</string>
+    <string name="latte">latte</string>
+    <string name="ingredients_milk_coffee">ingredients milk coffee</string>
 
 </resources>
