@@ -32,8 +32,9 @@ class HomeViewModel @Inject constructor(
                 when (result) {
                     is ApiResult.Success -> {
                         val drinks = result.data
-                        val bestSeller = getBestSeller(drinks)
-                        val recommendations = getRecommendations(drinks, bestSeller)
+                        val bestSeller = drinks.maxByOrNull { it.price.amount } ?: drinks.randomOrNull()
+                        val recommendations = drinks.filter { it != bestSeller }.shuffled().take(6)
+
                         _uiState.value = HomeUiState(
                             userName = userPrefs.userName,
                             bestSeller = bestSeller,
@@ -55,16 +56,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-    private fun getBestSeller(drinks: List<Drink>): Drink? {
-        return drinks.maxByOrNull { it.price.amount } ?: drinks.randomOrNull()
-    }
-
-    private fun getRecommendations(drinks: List<Drink>, bestSeller: Drink?): List<Drink> {
-        val filtered = bestSeller?.let { bs -> drinks.filter { it.id != bs.id } } ?: drinks
-        return filtered.shuffled().take(6)
-    }
-
 }
 
 data class HomeUiState(

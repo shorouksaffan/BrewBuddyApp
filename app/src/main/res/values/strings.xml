@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">BrewBuddy</string>
-    <string name="good_day_emad_rabie">Good day</string>
+    <string name="good_day_emad_rabie">Good day, Guest</string>
     <string name="drink_image">"drink image "</string>
     <string name="sample_drink_name">sample drink name</string>
     <string name="price_4_50">price</string>
