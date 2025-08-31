@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_homeFragment_to_drinkDetailsFragment"
             app:destination="@id/drinkDetailsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
     </fragment>
 
     <!-- Menu -->
