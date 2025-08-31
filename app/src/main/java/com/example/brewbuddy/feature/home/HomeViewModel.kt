@@ -61,9 +61,10 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getRecommendations(drinks: List<Drink>, bestSeller: Drink?): List<Drink> {
-        val filtered = bestSeller?.let { drinks.filter { it.id != it.id } } ?: drinks
+        val filtered = bestSeller?.let { bs -> drinks.filter { it.id != bs.id } } ?: drinks
         return filtered.shuffled().take(6)
     }
+
 }
 
 data class HomeUiState(

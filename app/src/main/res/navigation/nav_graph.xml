@@ -35,6 +35,9 @@
         <action
             android:id="@+id/action_menuFragment_to_drinkDetailsFragment"
             app:destination="@id/drinkDetailsFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
 
     <!-- Favorites -->
@@ -66,6 +69,15 @@
         <argument
             android:name="drinkId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_drinkDetailsFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_drinkDetailsFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
+        <action
+            android:id="@+id/action_drinkDetailsFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
     </fragment>
 
 </navigation>
