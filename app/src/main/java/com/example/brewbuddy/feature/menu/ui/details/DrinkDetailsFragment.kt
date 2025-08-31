@@ -47,17 +47,16 @@ class DrinkDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupClickListeners()
         observeUiState()
-        viewModel.loadDrinkDetails(drinkId) // Pass the ID manually
+        viewModel.loadDrinkDetails(drinkId)
     }
 
     private fun setupClickListeners() {
         binding.btnContinue.setOnClickListener {
             viewModel.addToCart(quantity)
-            // Navigate using manual bundle
             val bundle = Bundle().apply {
                 putInt("drinkId", drinkId)
             }
-            findNavController().navigate(R.id.cartFragment, bundle)
+            findNavController().navigate(R.id.ordersFragment, bundle)
         }
 
         binding.btnIncrease.setOnClickListener {

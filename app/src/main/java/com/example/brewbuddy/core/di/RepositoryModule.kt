@@ -1,10 +1,8 @@
 package com.example.brewbuddy.core.di
 
-import com.example.brewbuddy.core.data.repository.CartRepository
 import com.example.brewbuddy.core.data.repository.DrinkRepository
 import com.example.brewbuddy.core.data.repository.FavoritesRepository
 import com.example.brewbuddy.core.data.repository.OrdersRepository
-import com.example.brewbuddy.core.data.repository.impl.CartRepositoryImpl
 import com.example.brewbuddy.core.data.repository.impl.DrinkRepositoryImpl
 import com.example.brewbuddy.core.data.repository.impl.FavoritesRepositoryImpl
 import com.example.brewbuddy.core.data.repository.impl.OrdersRepositoryImpl
@@ -30,14 +28,10 @@ abstract class RepositoryModule {
         favoritesRepositoryImpl: FavoritesRepositoryImpl
     ): FavoritesRepository
 
+    // ADD THIS BINDING FOR ORDERS REPOSITORY
     @Binds
     @Singleton
     abstract fun bindOrdersRepository(
         ordersRepositoryImpl: OrdersRepositoryImpl
     ): OrdersRepository
-    @Binds
-    @Singleton
-    abstract fun bindCartRepository(
-        cartRepositoryImpl: CartRepositoryImpl
-    ): CartRepository
 }

@@ -4,7 +4,6 @@ import com.example.brewbuddy.core.data.local.dao.OrderDao
 import com.example.brewbuddy.core.data.local.entity.OrderEntity
 import com.example.brewbuddy.core.data.repository.OrdersRepository
 import com.example.brewbuddy.core.data.repository.toOrder
-import com.example.brewbuddy.core.data.repository.toOrderItem
 import com.example.brewbuddy.core.data.repository.toOrderItemEntity
 import com.example.brewbuddy.core.model.Order
 import com.example.brewbuddy.core.model.OrderItem
@@ -16,7 +15,6 @@ import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
-
 
 @Singleton
 class OrdersRepositoryImpl @Inject constructor(
