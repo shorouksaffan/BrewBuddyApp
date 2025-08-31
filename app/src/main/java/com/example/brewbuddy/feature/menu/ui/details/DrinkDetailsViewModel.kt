@@ -25,16 +25,24 @@ class DrinkDetailsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<DrinkDetailsUiState>(DrinkDetailsUiState.Loading)
     val uiState: StateFlow<DrinkDetailsUiState> = _uiState.asStateFlow()
 
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
+
     private val drinkId: Int = checkNotNull(savedStateHandle["drinkId"])
 
-    fun loadDrinkDetails(drinkId: Int) {
+    init {
+        loadDrinkDetails()
+    }
+
+    fun loadDrinkDetails() {
         viewModelScope.launch {
             _uiState.value = DrinkDetailsUiState.Loading
             try {
                 val drink = drinkRepository.getDrinkById(drinkId)
                 if (drink != null) {
-                    val isFavorite = favoritesRepository.isFavorite(drinkId)
-                    _uiState.value = DrinkDetailsUiState.Success(drink, isFavorite)
+                    val favoriteStatus = favoritesRepository.isFavorite(drinkId)
+                    _isFavorite.value = favoriteStatus
+                    _uiState.value = DrinkDetailsUiState.Success(drink)
                 } else {
                     _uiState.value = DrinkDetailsUiState.Error("Drink not found")
                 }
@@ -46,15 +54,16 @@ class DrinkDetailsViewModel @Inject constructor(
 
     fun toggleFavorite() {
         viewModelScope.launch {
-            val currentUiState = _uiState.value
-            if (currentUiState is DrinkDetailsUiState.Success) {
-                if (currentUiState.isFavorite) {
-                    favoritesRepository.removeFromFavorites(drinkId)
-                } else {
-                    favoritesRepository.addToFavorites(drinkId)
-                }
-                _uiState.value = currentUiState.copy(isFavorite = !currentUiState.isFavorite)
+            val currentlyFavorite = _isFavorite.value
+            if (currentlyFavorite) {
+                favoritesRepository.removeFromFavorites(drinkId)
+            } else {
+                favoritesRepository.addToFavorites(drinkId)
             }
+            _isFavorite.value = !currentlyFavorite
+
+            // No need to update UI state since we have separate favorite state flow
+            // The favorite icon will update through observeFavoriteState()
         }
     }
 
@@ -70,10 +79,14 @@ class DrinkDetailsViewModel @Inject constructor(
                     price = drink.price,
                     quantity = quantity
                 )
-                // Add to orders repository
                 ordersRepository.placeOrder(listOf(orderItem))
             }
         }
     }
 }
 
+sealed class DrinkDetailsUiState {
+    object Loading : DrinkDetailsUiState()
+    data class Success(val drink: Drink) : DrinkDetailsUiState()
+    data class Error(val message: String) : DrinkDetailsUiState()
+}

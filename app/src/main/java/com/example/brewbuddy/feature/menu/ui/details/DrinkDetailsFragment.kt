@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.brewbuddy.R
+import androidx.navigation.fragment.navArgs
 import com.example.brewbuddy.core.model.Drink
 import com.example.brewbuddy.databinding.FragmentDrinkDetailsBinding
 import com.example.brewbuddy.service.ImageLoader
@@ -25,14 +25,12 @@ class DrinkDetailsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: DrinkDetailsViewModel by viewModels()
+    private val args: DrinkDetailsFragmentArgs by navArgs() // Use safe args
 
     @Inject
     lateinit var imageLoader: ImageLoader
 
     private var quantity = 1
-    private val drinkId: Int by lazy {
-        arguments?.getInt("drinkId") ?: 0
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,16 +45,15 @@ class DrinkDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupClickListeners()
         observeUiState()
-        viewModel.loadDrinkDetails(drinkId)
+        observeFavoriteState()
+        // No need to manually call loadDrinkDetails - ViewModel init does it
     }
 
     private fun setupClickListeners() {
         binding.btnContinue.setOnClickListener {
             viewModel.addToCart(quantity)
-            val bundle = Bundle().apply {
-                putInt("drinkId", drinkId)
-            }
-            findNavController().navigate(R.id.ordersFragment, bundle)
+            Toast.makeText(requireContext(), "Added to cart!", Toast.LENGTH_SHORT).show()
+            findNavController().navigateUp() // Go back instead of navigating to orders
         }
 
         binding.btnIncrease.setOnClickListener {
@@ -70,6 +67,11 @@ class DrinkDetailsFragment : Fragment() {
                 binding.tvQuantity.text = quantity.toString()
             }
         }
+
+        // ADD FAVORITE BUTTON CLICK LISTENER
+        binding.ivFavorite.setOnClickListener {
+            viewModel.toggleFavorite()
+        }
     }
 
     private fun observeUiState() {
@@ -79,7 +81,7 @@ class DrinkDetailsFragment : Fragment() {
                     is DrinkDetailsUiState.Loading -> showLoading(true)
                     is DrinkDetailsUiState.Success -> {
                         showLoading(false)
-                        bindDrinkData(state.drink, state.isFavorite)
+                        bindDrinkData(state.drink)
                     }
                     is DrinkDetailsUiState.Error -> {
                         showLoading(false)
@@ -90,7 +92,16 @@ class DrinkDetailsFragment : Fragment() {
         }
     }
 
-    private fun bindDrinkData(drink: Drink, isFavorite: Boolean) {
+    // ADD THIS METHOD TO OBSERVE FAVORITE STATE
+    private fun observeFavoriteState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isFavorite.collectLatest { isFavorite ->
+                updateFavoriteIcon(isFavorite)
+            }
+        }
+    }
+
+    private fun bindDrinkData(drink: Drink) {
         with(binding) {
             drinkName.text = drink.name
             drinkDescription.text = drink.description
@@ -99,10 +110,20 @@ class DrinkDetailsFragment : Fragment() {
             imageLoader.loadImage(
                 drinkImage,
                 drink.imageUrl,
-                R.drawable.placeholder_drink,
-                R.drawable.error_drink
+                com.example.brewbuddy.R.drawable.placeholder_drink,
+                com.example.brewbuddy.R.drawable.error_drink
             )
         }
+    }
+
+    // ADD THIS METHOD TO UPDATE FAVORITE ICON
+    private fun updateFavoriteIcon(isFavorite: Boolean) {
+        val iconRes = if (isFavorite) {
+            com.example.brewbuddy.R.drawable.ic_favorite_filled
+        } else {
+            com.example.brewbuddy.R.drawable.ic_favorite_outline
+        }
+        binding.ivFavorite.setImageResource(iconRes)
     }
 
     private fun showLoading(show: Boolean) {

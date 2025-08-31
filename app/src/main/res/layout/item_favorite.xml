@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="8dp">
 
     <ImageView
@@ -14,7 +13,8 @@
         android:contentDescription="@string/drink_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@drawable/placeholder_drink"/>
 
     <TextView
         android:id="@+id/favName"
@@ -25,7 +25,8 @@
         android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@id/favImage"
         app:layout_constraintTop_toTopOf="@id/favImage"
-        app:layout_constraintEnd_toStartOf="@id/removeFavorite"/>
+        app:layout_constraintEnd_toStartOf="@id/removeFavorite"
+        tools:text="Iced Coffee"/>
 
     <TextView
         android:id="@+id/favPrice"
@@ -35,14 +36,16 @@
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="@id/favName"
         app:layout_constraintTop_toBottomOf="@id/favName"
-        app:layout_constraintEnd_toEndOf="@id/favName"/>
+        app:layout_constraintEnd_toEndOf="@id/favName"
+        tools:text="Rp 24.000"/>
 
     <ImageView
         android:id="@+id/removeFavorite"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:src="@android:drawable/ic_menu_delete"
         android:contentDescription="@string/remove_from_favorites"
+        android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

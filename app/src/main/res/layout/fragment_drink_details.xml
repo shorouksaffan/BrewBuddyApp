@@ -21,13 +21,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!-- Image at the top -->
         <ImageView
             android:id="@+id/drinkImage"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="200dp"
             android:scaleType="centerCrop"
             android:src="@drawable/details" />
 
+        <!-- Content below the image -->
         <LinearLayout
             android:id="@+id/textLayout"
             android:layout_width="match_parent"
@@ -35,6 +37,19 @@
             android:orientation="vertical"
             android:padding="16dp"
             android:background="@drawable/rounded_top_white_bg">
+
+            <!-- Favorite Button - Inside the content area, not on the image -->
+            <ImageView
+                android:id="@+id/ivFavorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_favorite_outline"
+                android:contentDescription="Favorite"
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"/>
 
             <TextView
                 android:id="@+id/drinkName"
@@ -71,15 +86,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
-
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnDecrease"
+                    android:id="@+id/btnIncrease"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:text="-"
                     android:textColor="@android:color/white"
                     app:backgroundTint="#A0522D"
-                    app:cornerRadius="50dp" />
+                    app:cornerRadius="50dp"
+                    app:icon="@drawable/outline_arrow_left_24"
+                    app:iconTint="@android:color/white"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
 
                 <TextView
                     android:id="@+id/tvQuantity"
@@ -91,32 +108,35 @@
                     android:textSize="16sp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnIncrease"
+                    android:id="@+id/btnDecrease"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:text="+"
                     android:textColor="@android:color/white"
                     app:backgroundTint="#A0522D"
-                    app:cornerRadius="50dp" />
+                    app:cornerRadius="50dp"
+                    app:icon="@drawable/outline_arrow_right_24"
+                    app:iconTint="@android:color/white"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+
             </LinearLayout>
+
+            <!-- Buy Now Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContinue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="10dp"
+                android:text="Buy Now"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                app:backgroundTint="#A0522D"
+                app:cornerRadius="50dp" />
         </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnContinue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="16dp"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="10dp"
-            android:text="Buy Now"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            app:backgroundTint="#A0522D"
-            app:cornerRadius="50dp" />
-
     </LinearLayout>
 
 </RelativeLayout>

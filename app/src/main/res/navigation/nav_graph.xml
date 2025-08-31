@@ -43,7 +43,7 @@
     <!-- Favorites -->
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.brewbuddy.feature.favorites.ui.FavoritesFragment"
+        android:name="com.example.brewbuddy.feature.favorites.FavoritesFragment"
         android:label="Favorites"
         tools:layout="@layout/fragment_favorites">
 
@@ -79,5 +79,7 @@
             android:id="@+id/action_drinkDetailsFragment_to_menuFragment"
             app:destination="@id/menuFragment" />
     </fragment>
+
+
 
 </navigation>

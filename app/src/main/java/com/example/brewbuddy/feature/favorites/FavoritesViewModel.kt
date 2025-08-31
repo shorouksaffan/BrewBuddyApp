@@ -13,11 +13,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val repository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(FavoritesUiState())
-    val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()
+    private val _favorites = MutableStateFlow<List<Drink>>(emptyList())
+    val favorites: StateFlow<List<Drink>> = _favorites.asStateFlow()
 
     init {
         loadFavorites()
@@ -25,40 +25,16 @@ class FavoritesViewModel @Inject constructor(
 
     private fun loadFavorites() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-
-            repository.getFavoriteDrinks().collect { favorites ->
-                _uiState.value = FavoritesUiState(
-                    favorites = favorites,
-                    isLoading = false,
-                    isEmpty = favorites.isEmpty()
-                )
+            favoritesRepository.getFavoriteDrinks().collect { favorites ->
+                _favorites.value = favorites
             }
         }
     }
 
     fun removeFromFavorites(drinkId: Int) {
         viewModelScope.launch {
-            repository.removeFromFavorites(drinkId)
-            // No need to manually refresh - flow will update automatically
-        }
-    }
-
-    fun toggleFavorite(drinkId: Int, isCurrentlyFavorite: Boolean) {
-        viewModelScope.launch {
-            if (isCurrentlyFavorite) {
-                repository.removeFromFavorites(drinkId)
-            } else {
-                // You'll need to add addToFavorites method to your repository
-                // repository.addToFavorites(drinkId)
-            }
+            favoritesRepository.removeFromFavorites(drinkId)
+            // The flow will automatically update and trigger a new collection
         }
     }
 }
-
-data class FavoritesUiState(
-    val favorites: List<Drink> = emptyList(),
-    val isLoading: Boolean = false,
-    val isEmpty: Boolean = false,
-    val error: String? = null
-)
