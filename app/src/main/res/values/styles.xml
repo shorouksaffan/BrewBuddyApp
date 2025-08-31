@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="activeItem">
+        <item name="android:color">@color/soft_beige</item>
+        <item name="android:width">24dp</item>
+        <item name="android:height">4dp</item>
+        <item name="cornerRadius">2dp</item>
+        <item name="marginHorizontal">12dp</item>
+        <item name="android:backgroundTint">@color/dark_copper</item>
+    </style>
 
     <style name="ShapeAppearanceOverlay.BrewBuddy.SegmentLeft">
         <item name="cornerSizeTopLeft">20dp</item>
@@ -54,10 +62,6 @@
         <item name="cornerSizeTopRight">30dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
-    </style>
-
-    <style name="activeItem">
-        <item name="android:backgroundTint">@color/dark_copper</item>
     </style>
 
 </resources>

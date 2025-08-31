@@ -41,31 +41,32 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        // Setup RecyclerView + adapter with click
-//        adapter = RecommendationAdapter(mutableListOf()) { drink ->
-//            val bundle = Bundle().apply { putInt("drinkId", drink.id) }
-//            findNavController().navigate(
-//                R.id.action_homeFragment_to_drinkDetailsFragment,
-//                bundle
-//            )
-//        }
-//        binding.rvRecommendations.layoutManager =
-//            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-//        binding.rvRecommendations.adapter = adapter
-
-
-        // Observe drinks from ViewModel
+        setupRecyclerView()
         collectDrinks()
 
-        // Example clicks for other UI elements
+        // Example: best seller card click
+        binding.cvBestSeller.setOnClickListener {
+            Toast.makeText(requireContext(), "Best seller clicked", Toast.LENGTH_SHORT).show()
+        }
 
-//        binding.cvBestSeller.setOnClickListener {
-//            Toast.makeText(requireContext(), "Best seller clicked", Toast.LENGTH_SHORT).show()
-//        }
-//        binding.cvNewMenu.setOnClickListener {
-//            Toast.makeText(requireContext(), "New menu clicked", Toast.LENGTH_SHORT).show()
-//        }
+        binding.cvNewMenu.setOnClickListener {
+            Toast.makeText(requireContext(), "New menu clicked", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setupRecyclerView() {
+        adapter = RecommendationAdapter(mutableListOf()) { drink ->
+            val bundle = Bundle().apply { putInt("drinkId", drink.id) }
+            findNavController().navigate(
+                R.id.action_homeFragment_to_drinkDetailsFragment,
+                bundle
+            )
+        }
+
+        binding.rvRecommendations.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = this@HomeFragment.adapter
+        }
     }
 
     private fun collectDrinks() {
@@ -84,7 +85,7 @@ class HomeFragment : Fragment() {
                         ).show()
                     }
                     ApiResult.Loading -> {
-                        // Could show shimmer/progress bar instead
+                        // TODO: show loading UI if needed
                     }
                 }
             }

@@ -8,5 +8,9 @@
     <string name="coffee_image">coffee image</string>
     <string name="latte">latte</string>
     <string name="ingredients_milk_coffee">ingredients milk coffee</string>
+    <string name="best_seller">best sller</string>
+    <string name="best_seller_image">best seller image</string>
+    <string name="delete_order">Delete order</string>
+    <string name="items_count">%d items</string>
 
 </resources>
