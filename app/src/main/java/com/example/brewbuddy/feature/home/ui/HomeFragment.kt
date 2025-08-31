@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
             Toast.makeText(requireContext(), "Best seller clicked", Toast.LENGTH_SHORT).show()
         }
         binding.cvNewMenu.setOnClickListener {
-            Toast.makeText(requireContext(), "New menu clicked", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_homeFragment_to_menuFragment)
         }
     }
 
