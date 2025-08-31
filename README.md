@@ -91,7 +91,7 @@ The **bridge** between Data (API/DB) and UI.
 
 - Repository setup, README, branch strategy (`dev` / `feature/*` / `master`), and task distribution were handled by **Shorouk Saffan**.
 ---
-### Task 1: Core -> eslam
+### Task 1: Core -> ***Eslam Magdy***
 - `core/`
 
 ---
