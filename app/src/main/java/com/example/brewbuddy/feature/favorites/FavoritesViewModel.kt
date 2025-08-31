@@ -5,13 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.brewbuddy.core.data.repository.FavoritesRepository
 import com.example.brewbuddy.core.model.Drink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val repository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
     private val _favorites = MutableStateFlow<List<Drink>>(emptyList())
@@ -23,17 +25,16 @@ class FavoritesViewModel @Inject constructor(
 
     private fun loadFavorites() {
         viewModelScope.launch {
-            repository.getFavoriteDrinks().collect {
-                _favorites.value = it
+            favoritesRepository.getFavoriteDrinks().collect { favorites ->
+                _favorites.value = favorites
             }
         }
     }
 
     fun removeFromFavorites(drinkId: Int) {
         viewModelScope.launch {
-            repository.removeFromFavorites(drinkId)
-            // refresh
-            loadFavorites()
+            favoritesRepository.removeFromFavorites(drinkId)
+            // The flow will automatically update and trigger a new collection
         }
     }
 }

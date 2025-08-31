@@ -16,30 +16,30 @@ class RecommendationAdapter(
         private val binding: ItemRecommendationBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-//        fun bind(drink: Drink) {
-//            binding.recoName.text = drink.name
-//            binding.recoPrice.text = "$${drink.price}" // format if needed
-//
-//            Glide.with(binding.recoImage.context)
-//                .load(drink.imageUrl)
-//                .placeholder(android.R.drawable.ic_menu_gallery)
-//                .into(binding.recoImage)
-//
-//            // Handle click
-//            binding.root.setOnClickListener { onItemClick(drink) }
-//        }
+        fun bind(drink: Drink) {
+            binding.recoName.text = drink.name
+            binding.recoPrice.text = "$${drink.price.amount}"
+
+            Glide.with(binding.recoImage.context)
+                .load(drink.imageUrl)
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .into(binding.recoImage)
+
+            binding.root.setOnClickListener { onItemClick(drink) }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecommendationViewHolder {
         val binding = ItemRecommendationBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
+            LayoutInflater.from(parent.context),
+            parent,
+            false
         )
         return RecommendationViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecommendationViewHolder, position: Int) {
-//        holder.bind(items[position])
-        // wait for emad
+        holder.bind(items[position])
     }
 
     override fun getItemCount() = items.size

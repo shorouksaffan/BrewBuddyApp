@@ -28,6 +28,7 @@ abstract class RepositoryModule {
         favoritesRepositoryImpl: FavoritesRepositoryImpl
     ): FavoritesRepository
 
+    // ADD THIS BINDING FOR ORDERS REPOSITORY
     @Binds
     @Singleton
     abstract fun bindOrdersRepository(

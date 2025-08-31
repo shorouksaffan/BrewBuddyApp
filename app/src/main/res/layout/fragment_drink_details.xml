@@ -1,105 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drinkDetailsFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/light_beige">
 
-    <ImageView
-        android:id="@+id/drink_image"
+    <!-- ProgressBar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+    <!-- Main Content -->
+    <LinearLayout
+        android:id="@+id/contentGroup"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/details" />
+        android:orientation="vertical">
 
+        <!-- Image at the top -->
+        <ImageView
+            android:id="@+id/drinkImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/details" />
 
-    <LinearLayout
-        android:id="@+id/text_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="176dp"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/drink_name"
-            android:layout_width="wrap_content"
+        <!-- Content below the image -->
+        <LinearLayout
+            android:id="@+id/textLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Iced Coffee Sweet Heaven"
-            android:textColor="#A0522D"
-            android:textSize="25sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/rounded_top_white_bg">
 
-        <TextView
-            android:id="@+id/drink_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Double espresso with condensed milk, served cold"
-            android:textColor="#7A7A7A"
-            android:textSize="25sp" />
+            <!-- Favorite Button - Inside the content area, not on the image -->
+            <ImageView
+                android:id="@+id/ivFavorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_favorite_outline"
+                android:contentDescription="Favorite"
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"/>
 
-        <TextView
-            android:id="@+id/drink_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Rp 24.000"
-            android:textColor="#A0522D"
-            android:textSize="25sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/drinkName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Iced Coffee Sweet Heaven"
+                android:textColor="#A0522D"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/drinkDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Double espresso with condensed milk, served cold"
+                android:textColor="#7A7A7A"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/drinkPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Rp 24.000"
+                android:textColor="#A0522D"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!-- Quantity selector -->
+            <LinearLayout
+                android:id="@+id/quantityLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnIncrease"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textColor="@android:color/white"
+                    app:backgroundTint="#A0522D"
+                    app:cornerRadius="50dp"
+                    app:icon="@drawable/outline_arrow_left_24"
+                    app:iconTint="@android:color/white"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+
+                <TextView
+                    android:id="@+id/tvQuantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="1"
+                    android:textColor="#A0522D"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDecrease"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textColor="@android:color/white"
+                    app:backgroundTint="#A0522D"
+                    app:cornerRadius="50dp"
+                    app:icon="@drawable/outline_arrow_right_24"
+                    app:iconTint="@android:color/white"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+
+            </LinearLayout>
+
+            <!-- Buy Now Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContinue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="10dp"
+                android:text="Buy Now"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                app:backgroundTint="#A0522D"
+                app:cornerRadius="50dp" />
+        </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/quantity_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/btnContinue"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
-        android:padding="16dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="-"
-            android:textColor="@android:color/white"
-            app:backgroundTint="#A0522D"
-            app:cornerRadius="50dp" />
-
-        <TextView
-            android:id="@+id/quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="1"
-            android:textColor="#A0522D"
-            android:textSize="16sp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="+"
-            android:textColor="@android:color/white"
-            app:backgroundTint="#A0522D"
-            app:cornerRadius="50dp" />
-    </LinearLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnContinue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="10dp"
-        android:text="Buy Now"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        app:backgroundTint="#A0522D"
-        app:cornerRadius="50dp" />
 
 </RelativeLayout>

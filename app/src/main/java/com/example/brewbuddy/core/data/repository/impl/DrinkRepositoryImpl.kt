@@ -12,6 +12,7 @@ import com.example.brewbuddy.core.data.repository.DrinkRepository
 import com.example.brewbuddy.core.data.repository.toDrink
 import com.example.brewbuddy.core.model.Drink
 import com.example.brewbuddy.core.util.DispatchersProvider
+import com.example.brewbuddy.core.util.PriceCatalog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -28,6 +29,25 @@ class DrinkRepositoryImpl @Inject constructor(
     private val drinkCacheDao: DrinkCacheDao,
     private val dispatchersProvider: DispatchersProvider
 ) : DrinkRepository {
+    override suspend fun getBestSeller(): Drink {
+        return withContext(dispatchersProvider.io) {
+            val allDrinks = drinkCacheDao.getAllDrinks().first()
+            val bestSellerName = PriceCatalog.getBestSeller()
+            allDrinks.find { it.title.equals(bestSellerName, ignoreCase = true) }
+                ?.toDrink() ?: allDrinks.random().toDrink()
+        }
+    }
+
+    override suspend fun getRecommendations(count: Int): List<Drink> {
+        return withContext(dispatchersProvider.io) {
+            val allDrinks = drinkCacheDao.getAllDrinks().first()
+            val recommendedNames = PriceCatalog.getRecommendedDrinks(count)
+
+            recommendedNames.mapNotNull { name ->
+                allDrinks.find { it.title.equals(name, ignoreCase = true) }?.toDrink()
+            }.take(count)
+        }
+    }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun getHotDrinks(): Flow<ApiResult<List<Drink>>> = flow {

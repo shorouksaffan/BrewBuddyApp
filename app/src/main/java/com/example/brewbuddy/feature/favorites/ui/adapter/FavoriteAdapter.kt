@@ -1,64 +1,69 @@
 package com.example.brewbuddy.feature.favorites.ui.adapter
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.brewbuddy.core.model.Drink
 import com.example.brewbuddy.databinding.ItemFavoriteBinding
+import com.example.brewbuddy.core.model.Drink
+import com.example.brewbuddy.service.ImageLoader
+import javax.inject.Inject
 
-class FavoritesAdapter(
-    private val items: MutableList<Drink>,
-    private val onRemoveClick: (Drink) -> Unit,
-    private val onItemClick: (Drink) -> Unit
-) : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
+class FavoritesAdapter @Inject constructor(
+    private val imageLoader: ImageLoader
+) : ListAdapter<Drink, FavoritesAdapter.FavoriteViewHolder>(FavoriteDiffCallback()) {
 
-    inner class FavoritesViewHolder(private val binding: ItemFavoriteBinding) :
+    var onRemoveFavorite: ((Drink) -> Unit)? = null
+    var onItemClick: ((Drink) -> Unit)? = null
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
+        val binding = ItemFavoriteBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return FavoriteViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    inner class FavoriteViewHolder(private val binding: ItemFavoriteBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(drink: Drink) {
-            binding.favName.text = drink.name
-            binding.favPrice.text = "$${drink.price}"
+            with(binding) {
+                favName.text = drink.name
+                favPrice.text = "Rp ${drink.price.amount.toInt() * 1000}"
 
-            Glide.with(binding.favImage.context)
-                .load(drink.imageUrl)
-                .placeholder(android.R.drawable.ic_menu_gallery)
-                .into(binding.favImage)
+                // Load drink image
+                imageLoader.loadImage(
+                    favImage,
+                    drink.imageUrl,
+                    com.example.brewbuddy.R.drawable.placeholder_drink,
+                    com.example.brewbuddy.R.drawable.error_drink
+                )
 
-            binding.removeFavorite.setOnClickListener {
-                onRemoveClick(drink)
-            }
-
-            binding.root.setOnClickListener {
-                val bundle = Bundle().apply {
-                    putInt("drinkId", drink.id)
+                // Set click listener for remove button
+                removeFavorite.setOnClickListener {
+                    onRemoveFavorite?.invoke(drink)
                 }
 
-                onItemClick(drink)
+                // Set click listener for entire item
+                root.setOnClickListener {
+                    onItemClick?.invoke(drink)
+                }
             }
-
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritesViewHolder {
-        val binding = ItemFavoriteBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return FavoritesViewHolder(binding)
-    }
+    class FavoriteDiffCallback : DiffUtil.ItemCallback<Drink>() {
+        override fun areItemsTheSame(oldItem: Drink, newItem: Drink): Boolean {
+            return oldItem.id == newItem.id
+        }
 
-    override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
-        holder.bind(items[position])
-    }
-
-    override fun getItemCount() = items.size
-
-    fun updateData(newItems: List<Drink>) {
-        items.clear()
-        items.addAll(newItems)
-        notifyDataSetChanged()
+        override fun areContentsTheSame(oldItem: Drink, newItem: Drink): Boolean {
+            return oldItem == newItem
+        }
     }
 }

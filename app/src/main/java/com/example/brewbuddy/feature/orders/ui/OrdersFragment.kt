@@ -6,11 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.brewbuddy.databinding.FragmentOrdersBinding
 import com.example.brewbuddy.feature.orders.OrdersViewModel
 import com.example.brewbuddy.feature.orders.ui.adapter.OrderAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class OrdersFragment : Fragment() {
@@ -41,44 +44,41 @@ class OrdersFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = OrderAdapter(
             onOrderClick = { order ->
-                // Navigate to order details (if needed)
+                // Navigate to order details if needed
             },
             onDeleteClick = { order ->
                 viewModel.deleteOrder(order.orderId)
             }
         )
 
-        // Match your layout ID: rvOrders instead of ordersRecyclerView
-        binding.rvOrders.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvOrders.adapter = adapter
+        binding.rvOrders.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@OrdersFragment.adapter
+            setHasFixedSize(true)
+        }
     }
 
     private fun setupToggleButtons() {
-        // Handle toggle selection for Recently/Past Orders
-        binding.toggle.setOnCheckedChangeListener { group, checkedId ->
+        binding.toggle.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                binding.chipRecently.id -> {
-                    // Show recent orders (last 30 days)
-                    viewModel.filterOrders(recentOnly = true)
-                }
-                binding.chipPastOrders.id -> {
-                    // Show all past orders
-                    viewModel.filterOrders(recentOnly = false)
-                }
+                binding.chipRecently.id -> viewModel.filterOrders(recentOnly = true)
+                binding.chipPastOrders.id -> viewModel.filterOrders(recentOnly = false)
             }
         }
     }
 
     private fun observeOrders() {
-        viewModel.orders.observe(viewLifecycleOwner) { orders ->
-            adapter.submitList(orders)
-            // Match your layout ID: tvEmpty instead of emptyState
-            binding.tvEmpty.visibility = if (orders.isEmpty()) View.VISIBLE else View.GONE
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                adapter.submitList(state.filteredOrders)
 
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            // If you have a progress bar in your layout, add it here
-            // binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding.tvEmpty.visibility =
+                    if (state.filteredOrders.isEmpty()) View.VISIBLE else View.GONE
+
+                // Show/hide loading progress bar
+                binding.progressBar.visibility =
+                    if (state.isLoading) View.VISIBLE else View.GONE
+            }
         }
     }
 

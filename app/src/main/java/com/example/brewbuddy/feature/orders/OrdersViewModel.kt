@@ -1,12 +1,10 @@
 package com.example.brewbuddy.feature.orders
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.brewbuddy.core.data.repository.OrdersRepository
 import com.example.brewbuddy.core.model.Order
+import com.example.brewbuddy.core.util.DateFormatters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,14 +18,10 @@ class OrdersViewModel @Inject constructor(
     private val ordersRepository: OrdersRepository
 ) : ViewModel() {
 
-    private val _allOrders = MutableStateFlow<List<Order>>(emptyList())
-    private val _filteredOrders = MutableStateFlow<List<Order>>(emptyList())
+    private val _uiState = MutableStateFlow(OrdersUiState())
+    val uiState: StateFlow<OrdersUiState> = _uiState.asStateFlow()
 
-    // Convert StateFlow to LiveData for observing in Fragment
-    val orders: LiveData<List<Order>> = _filteredOrders.asLiveData()
-
-    private val _isLoading = MutableLiveData(false)
-    val isLoading: LiveData<Boolean> = _isLoading
+    private var allOrders: List<Order> = emptyList()
 
     init {
         loadOrders()
@@ -35,37 +29,54 @@ class OrdersViewModel @Inject constructor(
 
     fun loadOrders() {
         viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                ordersRepository.getAllOrders().collect { ordersList ->
-                    _allOrders.value = ordersList
-                    _filteredOrders.value = ordersList
-                }
-            } catch (e: Exception) {
-                // Handle error
-            } finally {
-                _isLoading.value = false
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            ordersRepository.getAllOrders().collect { orders ->
+                allOrders = orders
+                _uiState.value = OrdersUiState(
+                    orders = orders,
+                    filteredOrders = orders,
+                    isLoading = false,
+                    isEmpty = orders.isEmpty()
+                )
             }
         }
     }
 
     fun filterOrders(recentOnly: Boolean) {
         viewModelScope.launch {
-            if (recentOnly) {
+            val filtered = if (recentOnly) {
                 val thirtyDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30)
-                _filteredOrders.value = _allOrders.value.filter { order ->
-                    order.placedAt >= thirtyDaysAgo
-                }
+                allOrders.filter { it.placedAt >= thirtyDaysAgo }
             } else {
-                _filteredOrders.value = _allOrders.value
+                allOrders
             }
+
+            _uiState.value = _uiState.value.copy(
+                filteredOrders = filtered,
+                showingRecentOnly = recentOnly
+            )
         }
     }
 
     fun deleteOrder(orderId: String) {
         viewModelScope.launch {
             ordersRepository.deleteOrder(orderId)
-            loadOrders()
+            loadOrders() // Reload to refresh the list
         }
     }
+
+    fun formatOrderDate(timestamp: Long): String {
+        return DateFormatters.formatOrderDate(timestamp)
+    }
+
 }
+
+data class OrdersUiState(
+    val orders: List<Order> = emptyList(),
+    val filteredOrders: List<Order> = emptyList(),
+    val isLoading: Boolean = false,
+    val isEmpty: Boolean = false,
+    val showingRecentOnly: Boolean = false,
+    val error: String? = null
+)

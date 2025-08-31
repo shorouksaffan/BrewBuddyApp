@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,43 +13,49 @@
         android:layout_marginTop="16dp"
         app:boxBackgroundColor="@color/soft_beige"
         app:boxBackgroundMode="outline"
-        app:boxCornerRadiusBottomEnd="22dp"
-        app:boxCornerRadiusBottomStart="22dp"
-        app:boxCornerRadiusTopEnd="22dp"
         app:boxCornerRadiusTopStart="22dp"
+        app:boxCornerRadiusTopEnd="22dp"
+        app:boxCornerRadiusBottomStart="22dp"
+        app:boxCornerRadiusBottomEnd="22dp"
         app:boxStrokeColor="@color/dark_copper"
         app:boxStrokeWidth="1.5dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Search.." />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivClearSearch"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:padding="4dp"
+            android:src="@drawable/outline_border_clear_24"
+            android:contentDescription="Clear search"
+            android:visibility="gone"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <RadioGroup
-        android:id="@+id/toggle"
+        android:id="@+id/chipGroup"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="40dp"
         android:layout_marginHorizontal="80dp"
         android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/gold_out_line"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/gold_out_line"
+        app:layout_constraintTop_toBottomOf="@id/etSearchLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etSearchLayout">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <RadioButton
             android:id="@+id/chipHot"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
             android:layout_weight="1"
             android:background="@drawable/toggle_widget_background"
             android:button="@null"
@@ -59,17 +65,10 @@
             android:textColor="@color/chip_text_color"
             android:textSize="18sp" />
 
-        <View
-            android:layout_width="50dp"
-            android:layout_height="50dp" />
-
         <RadioButton
             android:id="@+id/chipIced"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginBottom="1dp"
             android:layout_weight="1"
             android:background="@drawable/toggle_widget_background"
             android:button="@null"
@@ -83,35 +82,41 @@
         android:id="@+id/tvError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:textColor="@android:color/holo_red_light"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chipGroup"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Content container so ProgressBar can overlay RecyclerView -->
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No drinks found"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/chipGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <FrameLayout
         android:id="@+id/contentContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chipGroup"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toggle">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMenu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="-16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bottom_sheet_shape"
             android:overScrollMode="never"
-            android:padding="32dp"
-            android:paddingBottom="64dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:padding="16dp"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
         <ProgressBar
             android:id="@+id/progress"
@@ -121,7 +126,7 @@
             android:layout_gravity="center"
             android:indeterminate="true"
             android:indeterminateTint="@color/dark_copper"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

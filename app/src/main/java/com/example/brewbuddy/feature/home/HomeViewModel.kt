@@ -5,29 +5,22 @@ import androidx.lifecycle.viewModelScope
 import com.example.brewbuddy.core.data.remote.ApiResult
 import com.example.brewbuddy.core.data.repository.DrinkRepository
 import com.example.brewbuddy.core.model.Drink
+import com.example.brewbuddy.core.prefs.UserPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
-class HomeViewModel @Inject constructor(  // ADD @Inject constructor
-    private val repository: DrinkRepository
+class HomeViewModel @Inject constructor(
+    private val repository: DrinkRepository,
+    private val userPrefs: UserPrefs
 ) : ViewModel() {
 
-    private val _bestSeller = MutableStateFlow<Drink?>(null)
-    val bestSeller: StateFlow<Drink?> = _bestSeller.asStateFlow()
-
-    private val _recommendations = MutableStateFlow<List<Drink>>(emptyList())
-    val recommendations: StateFlow<List<Drink>> = _recommendations.asStateFlow()
-
-    private val _allDrinks = MutableStateFlow<ApiResult<List<Drink>>>(ApiResult.Loading)
-    val allDrinks: StateFlow<ApiResult<List<Drink>>> = _allDrinks.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
         loadHomeData()
@@ -35,36 +28,47 @@ class HomeViewModel @Inject constructor(  // ADD @Inject constructor
 
     private fun loadHomeData() {
         viewModelScope.launch {
-            _isLoading.value = true
             repository.getAllDrinks().collect { result ->
-                _allDrinks.value = result
-
                 when (result) {
+                    is ApiResult.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }
                     is ApiResult.Success -> {
                         val drinks = result.data
-                        _bestSeller.value = getBestSeller(drinks)
-                        _recommendations.value = getRecommendations(drinks, _bestSeller.value)
+                        if (drinks.isNotEmpty()) {
+                            val bestSeller = drinks.maxByOrNull { it.price.amount } ?: drinks.random()
+                            val recommendations = drinks.filter { it != bestSeller }.shuffled().take(6)
+
+                            _uiState.value = HomeUiState(
+                                userName = userPrefs.userName,
+                                bestSeller = bestSeller,
+                                recommendations = recommendations,
+                                isLoading = false,
+                                error = null
+                            )
+                        } else {
+                            _uiState.value = HomeUiState(
+                                error = "No drinks available",
+                                isLoading = false
+                            )
+                        }
                     }
-                    else -> {
-                        _bestSeller.value = null
-                        _recommendations.value = emptyList()
+                    is ApiResult.Failure -> {
+                        _uiState.value = HomeUiState(
+                            error = result.exception.message ?: "Failed to load data",
+                            isLoading = false
+                        )
                     }
                 }
-                _isLoading.value = false
             }
         }
     }
-
-    private fun getBestSeller(drinks: List<Drink>): Drink? {
-        return drinks.maxByOrNull { it.price.amount } ?: drinks.randomOrNull()
-    }
-
-    private fun getRecommendations(drinks: List<Drink>, bestSeller: Drink?): List<Drink> {
-        val filtered = if (bestSeller != null) {
-            drinks.filter { it.id != bestSeller.id }
-        } else {
-            drinks
-        }
-        return filtered.shuffled().take(6)
-    }
 }
+
+data class HomeUiState(
+    val userName: String = "",
+    val bestSeller: Drink? = null,
+    val recommendations: List<Drink> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null
+)
