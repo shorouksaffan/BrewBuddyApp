@@ -4,28 +4,34 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.brewbuddy.R
+import com.example.brewbuddy.core.model.Drink
 import com.example.brewbuddy.databinding.FragmentMenuBinding
+import com.example.brewbuddy.feature.menu.Category
+import com.example.brewbuddy.feature.menu.MenuEvent
 import com.example.brewbuddy.feature.menu.MenuUiState
 import com.example.brewbuddy.feature.menu.MenuViewModel
 import com.example.brewbuddy.feature.menu.ui.adapter.DrinkAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MenuFragment : Fragment() {
+
     private var _binding: FragmentMenuBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: MenuViewModel by viewModels()
-    private lateinit var adapter: DrinkAdapter
+    private lateinit var drinkAdapter: DrinkAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,61 +43,123 @@ class MenuFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        setupSearch()
-        setupCategoryChips()
+        setupSearchBar()
+        setupCategoryButtons()
         observeUiState()
-
-        viewModel.loadMenu()
+        observeEvents()
     }
 
     private fun setupRecyclerView() {
-        adapter = DrinkAdapter { drink ->
-            val action = MenuFragmentDirections.actionMenuFragmentToDrinkDetailsFragment(drink.id)
-            findNavController().navigate(action)
+        drinkAdapter = DrinkAdapter { drink ->
+            navigateToDetails(drink)
         }
-        binding.rvMenu.adapter = adapter
+
+        binding.rvMenu.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = drinkAdapter
+            setHasFixedSize(true)
+        }
     }
 
-    private fun setupSearch() {
+    private fun setupSearchBar() {
         binding.etSearch.addTextChangedListener { text ->
-            viewModel.onQueryChanged(text.toString())
+            viewModel.search(text?.toString() ?: "")
+        }
+
+        binding.ivClearSearch.setOnClickListener {
+            binding.etSearch.setText("")
+            viewModel.search("")
         }
     }
 
-    private fun setupCategoryChips() {
-        binding.chipHot.setOnClickListener {
-            viewModel.filterByCategory(MenuViewModel.Category.HOT)
+    private fun setupCategoryButtons() {
+        binding.chipGroup.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                R.id.chipHot -> viewModel.filterByCategory(Category.HOT)
+                R.id.chipIced -> viewModel.filterByCategory(Category.COLD)
+                else -> viewModel.filterByCategory(Category.ALL)
+            }
         }
-        binding.chipIced.setOnClickListener {
-            viewModel.filterByCategory(MenuViewModel.Category.COLD)
-        }
+
     }
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    binding.progress.isVisible = state is MenuUiState.Loading
+            viewModel.uiState.collectLatest { state ->
+                when (state) {
+                    is MenuUiState.Loading -> showLoading()
+                    is MenuUiState.Error -> showError(state.message)
+                    is MenuUiState.Empty -> showEmpty()
+                    is MenuUiState.Success -> showSuccess(state.drinks)
+                }
+            }
+        }
+    }
 
+    private fun showLoading() {
+        binding.apply {
+            progress.isVisible = true
+            rvMenu.isVisible = false
+            tvError.isVisible = false
+            tvEmptyState.isVisible = false
+        }
+    }
 
-                    when (state) {
-                        is MenuUiState.Success -> {
-                            adapter.submitList(state.drinks)
-                        }
+    private fun showError(message: String) {
+        binding.apply {
+            progress.isVisible = false
+            rvMenu.isVisible = false
+            tvError.isVisible = true
+            tvEmptyState.isVisible = false
+            tvError.text = message
+        }
+    }
 
-                        is MenuUiState.Error -> {
-                            adapter.submitList(emptyList())
-                        }
+    private fun showEmpty() {
+        binding.apply {
+            progress.isVisible = false
+            rvMenu.isVisible = false
+            tvError.isVisible = false
+            tvEmptyState.isVisible = true
+            tvEmptyState.text = "No drinks found"
+        }
+    }
 
-                        MenuUiState.Loading,
-                        MenuUiState.Empty -> {
-                            adapter.submitList(emptyList())
-                        }
+    private fun showSuccess(drinks: List<Drink>) {
+        binding.apply {
+            progress.isVisible = false
+            rvMenu.isVisible = true
+            tvError.isVisible = false
+            tvEmptyState.isVisible = false
+            drinkAdapter.submitList(drinks)
+        }
+    }
+
+    private fun observeEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.events.collectLatest { event ->
+                when (event) {
+                    is MenuEvent.ShowSnackBar -> {
+                        Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                    }
+                    is MenuEvent.NavigateToDetails -> {
+                        navigateToDetailsById(event.drinkId)
                     }
                 }
             }
         }
+    }
+
+    private fun navigateToDetails(drink: Drink) {
+        val action = MenuFragmentDirections.actionMenuFragmentToDrinkDetailsFragment(drink.id)
+        findNavController().navigate(action)
+    }
+
+    private fun navigateToDetailsById(drinkId: Int) {
+        val action = MenuFragmentDirections.actionMenuFragmentToDrinkDetailsFragment(drinkId)
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {

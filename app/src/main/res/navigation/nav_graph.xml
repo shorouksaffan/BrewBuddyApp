@@ -5,7 +5,6 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
-    <!-- Home -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.brewbuddy.feature.home.ui.HomeFragment"
@@ -14,10 +13,13 @@
 
         <action
             android:id="@+id/action_homeFragment_to_drinkDetailsFragment"
-            app:destination="@id/drinkDetailsFragment" />
+            app:destination="@id/drinkDetailsFragment">
+            <argument
+                android:name="drinkId"
+                app:argType="integer" />
+        </action>
     </fragment>
 
-    <!-- Menu -->
     <fragment
         android:id="@+id/menuFragment"
         android:name="com.example.brewbuddy.feature.menu.ui.MenuFragment"
@@ -31,10 +33,13 @@
 
         <action
             android:id="@+id/action_menuFragment_to_drinkDetailsFragment"
-            app:destination="@id/drinkDetailsFragment" />
+            app:destination="@id/drinkDetailsFragment">
+            <argument
+                android:name="drinkId"
+                app:argType="integer" />
+        </action>
     </fragment>
 
-    <!-- Favorites -->
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.brewbuddy.feature.favorites.ui.FavoritesFragment"
@@ -43,17 +48,19 @@
 
         <action
             android:id="@+id/action_favoritesFragment_to_drinkDetailsFragment"
-            app:destination="@id/drinkDetailsFragment" />
+            app:destination="@id/drinkDetailsFragment">
+            <argument
+                android:name="drinkId"
+                app:argType="integer" />
+        </action>
     </fragment>
 
-    <!-- Orders -->
     <fragment
         android:id="@+id/ordersFragment"
         android:name="com.example.brewbuddy.feature.orders.ui.OrdersFragment"
         android:label="Orders"
         tools:layout="@layout/fragment_orders" />
 
-    <!-- Drink Details -->
     <fragment
         android:id="@+id/drinkDetailsFragment"
         android:name="com.example.brewbuddy.feature.menu.ui.details.DrinkDetailsFragment"
@@ -63,6 +70,17 @@
         <argument
             android:name="drinkId"
             app:argType="integer" />
+
+
+        <action
+            android:id="@+id/action_drinkDetailsFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.brewbuddy.feature.cart.ui.CartFragment"
+        android:label="Cart"
+        tools:layout="@layout/fragment_cart" />
 
 </navigation>

@@ -5,8 +5,9 @@ data class OrderItem(
     val drinkName: String,
     val drinkImage: String,
     val price: Money,
-    val quantity: Int
+    var quantity: Int=1
 ) {
-    val totalPrice: Money
-        get() = price * quantity
+    fun incrementQuantity() = quantity++
+    fun decrementQuantity() = if (quantity > 1) quantity-- else 1
+
 }

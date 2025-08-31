@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.brewbuddy.R
-import com.example.brewbuddy.core.data.remote.ApiResult
 import com.example.brewbuddy.core.model.Drink
 import com.example.brewbuddy.databinding.FragmentHomeBinding
 import com.example.brewbuddy.feature.home.HomeViewModel
@@ -30,8 +29,7 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: RecommendationAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -40,15 +38,13 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
-        collectDrinks()
+        collectUiState()
 
-        // Example: best seller card click
+        // Static demo clicks (optional)
         binding.cvBestSeller.setOnClickListener {
             Toast.makeText(requireContext(), "Best seller clicked", Toast.LENGTH_SHORT).show()
         }
-
         binding.cvNewMenu.setOnClickListener {
             Toast.makeText(requireContext(), "New menu clicked", Toast.LENGTH_SHORT).show()
         }
@@ -64,29 +60,38 @@ class HomeFragment : Fragment() {
         }
 
         binding.rvRecommendations.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
             adapter = this@HomeFragment.adapter
         }
     }
 
-    private fun collectDrinks() {
+    private fun collectUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.allDrinks.collectLatest { result ->
-                when (result) {
-                    is ApiResult.Success -> {
-                        val drinks: List<Drink> = result.data
-                        adapter.updateData(drinks)
+            viewModel.uiState.collectLatest { state ->
+                if (state.isLoading) {
+                    // TODO: show loading indicator
+                    return@collectLatest
+                }
+
+                state.bestSeller?.let { drink ->
+                    binding.tvCoffeeTitle.text = drink.name
+                    binding.tvMoreInfo.setOnClickListener {
+                        val bundle = Bundle().apply { putInt("drinkId", drink.id) }
+                        findNavController().navigate(
+                            R.id.action_homeFragment_to_drinkDetailsFragment,
+                            bundle
+                        )
                     }
-                    is ApiResult.Failure -> {
-                        Toast.makeText(
-                            requireContext(),
-                            "Error: ${result.exception.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    ApiResult.Loading -> {
-                        // TODO: show loading UI if needed
-                    }
+                }
+
+                adapter.updateData(state.recommendations)
+
+                state.error?.let {
+                    Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
                 }
             }
         }

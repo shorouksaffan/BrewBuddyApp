@@ -1,6 +1,7 @@
 package com.example.brewbuddy.core.util
 
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -30,6 +31,16 @@ object DateFormatters {
             diff < 24 * 60 * 60 * 1000 -> "Today at ${formatTime(timestamp)}"
             diff < 2 * 24 * 60 * 60 * 1000 -> "Yesterday at ${formatTime(timestamp)}"
             else -> formatFullDate(timestamp)
+        }
+    }
+    fun formatOrderDateForUI(timestamp: Long): String {
+        val date = Date(timestamp)
+        val today = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, 0) }.timeInMillis
+
+        return when {
+            timestamp >= today -> "Today, ${SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)}"
+            timestamp >= today - 24 * 60 * 60 * 1000 -> "Yesterday, ${SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)}"
+            else -> SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date)
         }
     }
 }

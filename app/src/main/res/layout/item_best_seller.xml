@@ -2,7 +2,6 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
@@ -21,8 +20,7 @@
             android:layout_height="120dp"
             android:layout_gravity="center_horizontal"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/best_seller_image"
-            tools:src="@tools:sample/avatars" />
+            android:contentDescription="@string/best_seller_image"/>
 
         <TextView
             android:id="@+id/bestSellerName"
@@ -30,8 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textAlignment="center"
-            tools:text="Espresso Deluxe" />
+            android:textAlignment="center"/>
 
         <TextView
             android:id="@+id/bestSellerDescription"
@@ -41,8 +38,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textAlignment="center"
             android:maxLines="2"
-            android:ellipsize="end"
-            tools:text="Rich espresso with creamy foam and caramel drizzle" />
+            android:ellipsize="end"/>
 
         <TextView
             android:id="@+id/bestSellerPrice"
@@ -51,8 +47,7 @@
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textAlignment="center"
-            android:textColor="@color/black"
-            tools:text="$5.99" />
+            android:textColor="@color/black"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -62,8 +57,6 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textStyle="bold" />
-
+            android:textStyle="bold"/>
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

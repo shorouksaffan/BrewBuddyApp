@@ -46,30 +46,27 @@ class FavoritesFragment : Fragment() {
                 Toast.makeText(requireContext(), "${drink.name} removed", Toast.LENGTH_SHORT).show()
             },
             onItemClick = { drink ->
-//                val bundle = Bundle().apply { putInt("drinkId", drink.id) }
-//                findNavController().navigate(
-//                    R.id.action_favoritesFragment_to_drinkDetailsFragment,
-//                    bundle
-//                ) wait for emad
+                val action = FavoritesFragmentDirections
+                    .actionFavoritesFragmentToDrinkDetailsFragment(drink.id)
+                findNavController().navigate(action)
             }
         )
 
-//
-//        binding.rvFavorites.layoutManager = GridLayoutManager(requireContext(), 2)
-//        binding.rvFavorites.adapter = adapter
+        binding.rvFavorites.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.rvFavorites.adapter = adapter
 
         collectFavorites()
     }
 
     private fun collectFavorites() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.favorites.collectLatest { drinks ->
-                if (drinks.isEmpty()) {
-//                    binding.tvEmpty.visibility = View.VISIBLE
+            viewModel.uiState.collectLatest { state ->
+                if (state.isEmpty) {
+                    binding.tvEmpty.visibility = View.VISIBLE
                 } else {
-//                    binding.tvEmpty.visibility = View.GONE
+                    binding.tvEmpty.visibility = View.GONE
                 }
-                adapter.updateData(drinks)
+                adapter.updateData(state.favorites)
             }
         }
     }
