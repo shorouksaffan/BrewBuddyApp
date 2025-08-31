@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">BrewBuddy</string>
+    <string name="good_day_emad_rabie">Good day, Guest</string>
+    <string name="drink_image">"drink image "</string>
+    <string name="sample_drink_name">sample drink name</string>
+    <string name="price_4_50">price</string>
+    <string name="remove_from_favorites">remove from favorites</string>
+    <string name="coffee_image">coffee image</string>
+    <string name="latte">latte</string>
+    <string name="ingredients_milk_coffee">ingredients milk coffee</string>
+    <string name="best_seller">best sller</string>
+    <string name="best_seller_image">best seller image</string>
+    <string name="delete_order">Delete order</string>
+    <string name="items_count">%d items</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="continue_now">Continue</string>
+    <string name="header_good_day_with_name">Good day, %1$s!</string>
+    <string name="header_what_drink">What would you like to drink?</string>
+    <string name="header_orders">Orders</string>
+    <string name="header_favorites">Favorites</string>
+
 </resources>
