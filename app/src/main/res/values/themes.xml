@@ -10,7 +10,23 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@color/light_beige</item>
+
+        <item name="android:windowLightStatusBar">true</item>
+
+    </style>
+    <style name="Base.Theme.BrewBuddy" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">@color/light_beige</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="RoundedImageFromBottom" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeBottomLeft">110dp</item>
+        <item name="cornerSizeBottomRight">110dp</item>
     </style>
 </resources>

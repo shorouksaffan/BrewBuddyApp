@@ -5,66 +5,66 @@ import androidx.lifecycle.viewModelScope
 import com.example.brewbuddy.core.data.remote.ApiResult
 import com.example.brewbuddy.core.data.repository.DrinkRepository
 import com.example.brewbuddy.core.model.Drink
-import kotlinx.coroutines.flow.*
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(  // ADD @Inject constructor
     private val repository: DrinkRepository
 ) : ViewModel() {
 
-    private val _hotDrinks = MutableStateFlow<ApiResult<List<Drink>>>(ApiResult.Loading)
-    val hotDrinks: StateFlow<ApiResult<List<Drink>>> = _hotDrinks.asStateFlow()
+    private val _bestSeller = MutableStateFlow<Drink?>(null)
+    val bestSeller: StateFlow<Drink?> = _bestSeller.asStateFlow()
 
-    private val _coldDrinks = MutableStateFlow<ApiResult<List<Drink>>>(ApiResult.Loading)
-    val coldDrinks: StateFlow<ApiResult<List<Drink>>> = _coldDrinks.asStateFlow()
+    private val _recommendations = MutableStateFlow<List<Drink>>(emptyList())
+    val recommendations: StateFlow<List<Drink>> = _recommendations.asStateFlow()
 
     private val _allDrinks = MutableStateFlow<ApiResult<List<Drink>>>(ApiResult.Loading)
     val allDrinks: StateFlow<ApiResult<List<Drink>>> = _allDrinks.asStateFlow()
 
-    private val _searchResults = MutableStateFlow<List<Drink>>(emptyList())
-    val searchResults: StateFlow<List<Drink>> = _searchResults.asStateFlow()
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     init {
-        loadHotDrinks()
-        loadColdDrinks()
-        loadAllDrinks()
+        loadHomeData()
     }
 
-    private fun loadHotDrinks() {
+    private fun loadHomeData() {
         viewModelScope.launch {
-            repository.getHotDrinks()
-                .collect { result -> _hotDrinks.value = result }
+            _isLoading.value = true
+            repository.getAllDrinks().collect { result ->
+                _allDrinks.value = result
+
+                when (result) {
+                    is ApiResult.Success -> {
+                        val drinks = result.data
+                        _bestSeller.value = getBestSeller(drinks)
+                        _recommendations.value = getRecommendations(drinks, _bestSeller.value)
+                    }
+                    else -> {
+                        _bestSeller.value = null
+                        _recommendations.value = emptyList()
+                    }
+                }
+                _isLoading.value = false
+            }
         }
     }
 
-    private fun loadColdDrinks() {
-        viewModelScope.launch {
-            repository.getColdDrinks()
-                .collect { result -> _coldDrinks.value = result }
-        }
+    private fun getBestSeller(drinks: List<Drink>): Drink? {
+        return drinks.maxByOrNull { it.price.amount } ?: drinks.randomOrNull()
     }
 
-    private fun loadAllDrinks() {
-        viewModelScope.launch {
-            repository.getAllDrinks()
-                .collect { result -> _allDrinks.value = result }
+    private fun getRecommendations(drinks: List<Drink>, bestSeller: Drink?): List<Drink> {
+        val filtered = if (bestSeller != null) {
+            drinks.filter { it.id != bestSeller.id }
+        } else {
+            drinks
         }
-    }
-
-    fun searchDrinks(query: String) {
-        viewModelScope.launch {
-            repository.searchDrinks(query)
-                .collect { drinks -> _searchResults.value = drinks }
-        }
-    }
-
-    fun refreshDrinks() {
-        viewModelScope.launch {
-            repository.refreshDrinks()
-            // After refresh, reload data
-            loadHotDrinks()
-            loadColdDrinks()
-            loadAllDrinks()
-        }
+        return filtered.shuffled().take(6)
     }
 }

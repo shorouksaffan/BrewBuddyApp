@@ -1,5 +1,9 @@
 package com.example.brewbuddy.core.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Drink(
     val id: Int,
     val name: String,
@@ -8,7 +12,7 @@ data class Drink(
     val imageUrl: String,
     val price: Money,
     val isHot: Boolean
-) {
+) : Parcelable {
     val category: String
         get() = if (isHot) "Hot" else "Cold"
 
